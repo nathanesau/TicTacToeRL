@@ -74,10 +74,10 @@ def trainComputer(numGames, dfx, efx, lrx, dfo, efo, lro, progressBar):
     strategyx = Strategy(dfx, efx, lrx)
     strategyo = Strategy(dfo, efo, lro)
 
-    if os.path.exists('data/strategyx.pkl'):
-        strategyx.qtable = pickle.load(open('data/strategyx.pkl', 'rb'))
-    if os.path.exists('data/strategyo.pkl'):
-        strategyo.qtable = pickle.load(open('data/strategyo.pkl', 'rb'))
+    if os.path.exists(strategyx_file):
+        strategyx.qtable = pickle.load(open(strategyx_file, 'rb'))
+    if os.path.exists(strategyo_file):
+        strategyo.qtable = pickle.load(open(strategyo_file, 'rb'))
 
     for i in range(numGames):
         percent_done = float(i) / numGames * 100.0
@@ -85,8 +85,8 @@ def trainComputer(numGames, dfx, efx, lrx, dfo, efo, lro, progressBar):
         playTrainingGame(strategyx, strategyo)
 
     # pickle save the qtables
-    pickle.dump(strategyx.qtable, open('data/strategyx.pkl', 'wb'))
-    pickle.dump(strategyo.qtable, open('data/strategyo.pkl', 'wb'))
+    pickle.dump(strategyx.qtable, open(strategyx_file, 'wb'))
+    pickle.dump(strategyo.qtable, open(strategyo_file, 'wb'))
 
 
 class TrainParamWidget(QWidget):

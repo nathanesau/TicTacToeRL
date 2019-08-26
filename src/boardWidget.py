@@ -33,7 +33,8 @@ class BoardWidget(QWidget):
         super().__init__(parent)
 
         self.strategy_o = Strategy(0, 0, 0)
-        self.strategy_o.qtable = pickle.load(open('data/strategyo.pkl', 'rb'))
+        if os.path.exists(strategyo_file):
+            self.strategy_o.qtable = pickle.load(open(strategyo_file, 'rb'))
         self.board = Board()
 
         self.row1Squares = [TTTSquare(1, col, self) for col in range(1, 4)]

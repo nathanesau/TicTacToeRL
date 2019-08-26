@@ -2,6 +2,10 @@ import random
 import os.path
 import pickle
 
+data_dir = os.path.dirname(os.path.realpath(__file__)) + "/data"
+strategyx_file = data_dir + "/strategyx.pkl"
+strategyo_file = data_dir + "/strategyo.pkl"
+
 # qlearning logic
 class Strategy:
     def __init__(self, discount_factor, explore_factor, learn_rate):

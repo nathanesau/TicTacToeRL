@@ -49,7 +49,8 @@ class MainWidget(QWidget):
         # update board widget strategy (reload pickle file)
         self.boardWidget.clearBoard()
         self.boardWidget.strategy_o = Strategy(0, 0, 0)
-        self.boardWidget.strategy_o.qtable = pickle.load(open('data/strategyo.pkl', 'rb'))
+        if os.path.exists(strategyo_file):
+            self.boardWidget.strategy_o.qtable = pickle.load(open(strategyo_file, 'rb'))
 
     def updateInfoWidget(self, winner):
         self.infoWidget.update(winner)
