@@ -9,6 +9,8 @@ from strategy import *
 import settings
 import qrc_resources
 
+import matplotlib.pyplot as plt
+
 
 def get_x_reward(board):
     winner = board.getWinner()
@@ -19,6 +21,11 @@ def get_o_reward(board):
     winner = board.getWinner()
     return 100 if winner is ID_O else 0 if winner is ID_UNDEFINED else -100
 
+def rolling_avg(list,window_size=100):
+    avg_list = []
+    for i in range(100,len(list),1):
+        avg_list.append(sum(list[i-window_size:i])/window_size)
+    return avg_list
 
 def playTrainingGame(strategyx, strategyo):
     board = Board()
@@ -46,7 +53,7 @@ def playTrainingGame(strategyx, strategyo):
                 rewardx = get_x_reward(board)
                 strategyx.update(curr_statex, next_statex,
                                  actionx, rewardx, True)
-                return
+                return board.getWinner()
 
         else:  # ID_O
             curr_stateo = tuple(tuple(row) for row in board.data)
@@ -65,7 +72,7 @@ def playTrainingGame(strategyx, strategyo):
                 rewardo = get_o_reward(board)
                 strategyo.update(curr_stateo, next_stateo,
                                  actiono, rewardo, True)
-                return
+                return board.getWinner()
 
         curr_id = ID_O if curr_id is ID_X else ID_X  # at end of loop
 
@@ -79,14 +86,31 @@ def trainComputer(numGames, dfx, efx, lrx, dfo, efo, lro, progressBar):
     if os.path.exists(strategyo_file):
         strategyo.qtable = pickle.load(open(strategyo_file, 'rb'))
 
+    x_win_record = []
+    o_win_record = []
+    
     for i in range(numGames):
         percent_done = float(i) / numGames * 100.0
         progressBar.setValue(percent_done)
-        playTrainingGame(strategyx, strategyo)
+        winner = playTrainingGame(strategyx, strategyo)
+        if winner is ID_X:
+            x_win_record.append(1)
+            o_win_record.append(-1)
+        elif winner is ID_O:
+            o_win_record.append(1)
+            x_win_record.append(-1)
+        else:
+            x_win_record.append(0)
+            o_win_record.append(0)
 
     # pickle save the qtables
     pickle.dump(strategyx.qtable, open(strategyx_file, 'wb'))
     pickle.dump(strategyo.qtable, open(strategyo_file, 'wb'))
+
+    plt.plot(rolling_avg(x_win_record,100),label="x winning rate")
+    plt.plot(rolling_avg(o_win_record,100),label="o winning rate")
+    plt.legend()
+    plt.show()
 
 
 class TrainParamWidget(QWidget):
